@@ -1,5 +1,5 @@
 ##**************************************************************************************************************************************##
-##This code does not contain error handling or logging functionality and is not intended for production use. Please use with caution ***##
+##This code does not contain error handling or logging functionality and is not intended for production use. Please use with caution   *##
 ##**************************************************************************************************************************************##
 
 import requests
