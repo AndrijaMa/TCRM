@@ -5,6 +5,10 @@
 import requests
 import pandas as pd
 import base64
+import time
+
+Dataset_Name = '****'  #The name of the TCRM dataset that you want to want to write to
+filename = time.strftime("%Y%m%d-%H%M%S")+".csv" #The name of the file that the script will import the data from
 
 params = {
     "grant_type": "password",
@@ -14,7 +18,7 @@ params = {
     "password": "**--**" # Concat your password and your security token
 }
 
-Dataset_Import_Name = '****'
+##**************************************************************************************************************************************##
 
 r = requests.post("https://login.salesforce.com/services/oauth2/token", params=params)
 # if you connect to a Sandbox, use test.salesforce.com instead
@@ -31,6 +35,7 @@ def sf_api_call(action, parameters = {}, method = 'get', data = {}):
         'Accept-Encoding': 'gzip',
         'Authorization': 'Bearer %s' % access_token
     }
+
     if method == 'get':
         r = requests.request(method, instance_url+action, headers=headers, params=parameters, timeout=30)
     elif method in ['post', 'patch']:
@@ -49,10 +54,8 @@ def sf_api_call(action, parameters = {}, method = 'get', data = {}):
     else:
         raise Exception('API error when calling %s : %s' % (r.url, r.content))
 
-
 #Read local CSV and encode with base64
-
-with open('SparNord.csv', 'rb') as binary_file:
+with open(filename, 'rb') as binary_file:
     binary_file_data = binary_file.read()
     base64_encoded_data = base64.b64encode(binary_file_data)
     base64_message = base64_encoded_data.decode('utf-8')
@@ -60,7 +63,7 @@ with open('SparNord.csv', 'rb') as binary_file:
 #Initialize file upload
 call = sf_api_call("/services/data/v53.0/sobjects/InsightsExternalData", method="post", data={
  'Format' : 'csv',
- 'EdgemartAlias' : Dataset_Import_Name,
+ 'EdgemartAlias' : Dataset_Name,
  'Operation' : 'Overwrite',
  'Action' : 'None'
 })

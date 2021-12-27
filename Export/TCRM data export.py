@@ -7,6 +7,8 @@ import json
 import time
 import pandas as pd
 
+Dataset_Name = "****" #The name of the TCRM dataset that you are exporting from Tableau CRM
+filename = time.strftime("%Y%m%d-%H%M%S")+".csv" #The name of the file that the script will export the data to 
 
 params = {
     "grant_type": "password",
@@ -16,8 +18,7 @@ params = {
     "password": "**--**" # Concat your password and your security token
 }
 
-tcrm_dataset_name = "****" #The name of the TCRM dataset that you want to export
-timestr = time.strftime("%Y%m%d-%H%M%S")+".csv"
+##**************************************************************************************************************************************##
 
 r = requests.post("https://login.salesforce.com/services/oauth2/token", params=params)
 # if you connect to a Sandbox, use test.salesforce.com instead
@@ -57,7 +58,7 @@ def sf_api_call(action, parameters = {}, method = 'get', data = {}):
 datasets = sf_api_call('/services/data/v53.0/wave/datasets/', method="get")
 
 #Filter down to the dataset that you want to export
-d = [x for x in datasets['datasets'] if x['label'] == tcrm_dataset_name]
+d = [x for x in datasets['datasets'] if x['label'] == Dataset_Name]
 
 #Get the id and current version id for the dataset that you want to download
 dataid = d[0]['id']
@@ -74,4 +75,4 @@ d = pd.read_json(json.dumps(call['results']['records']))
 datafile = pd.DataFrame(d)
 
 #Save to a local file
-datafile.to_csv(timestr)
+datafile.to_csv(filename)
